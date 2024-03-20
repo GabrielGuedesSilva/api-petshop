@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo:4.4.6
+    container_name: db-mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    ports:
+      - 27017:27017
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+      - .certs/mongodb:/etc/ssl:ro
+    networks:
+      - db-network
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+volumes:
+  mongo-data:
+    name: mongo
+
+networks:
+  db-network:
+    name: db-network
+    driver: bridge
