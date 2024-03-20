@@ -61,51 +61,54 @@ async def create_pet(request: Request):
         })
         
 
-@PET_ROUTE.route('/update/pet/<pet_id>/', methods=['GET', 'PUT'])
+@PET_ROUTE.route('/update/pet/<pet_id>/', methods=['PUT', 'PATCH', 'GET'])
 async def update_pet(request: Request, pet_id):
     try:   
-        pet_instance = PetModel(**request.json)
-        pet_dict = pet_instance.model_dump()
-        
-        collection.update_one({"_id": ObjectId(pet_id)}, {"$set":  pet_dict})
-        
-        return response.json({"Message":"Registro atualizado", "Pet atualizado": pet_dict})
-    except ValidationError as e:       
-        erros = e.errors()
-        
-        return response.json({"Description": erros[0]["type"],
-        "Message error": erros[0]['msg'],
-        })
-        
-        
-@PET_ROUTE.route('/patch/pet/<pet_id>/', methods=['GET', 'PATCH'])
-async def patch_pet(request: Request, pet_id):
-    try:   
-        update_pet_instance = UpdatePetModel(**request.json)
-        update_pet_dict = update_pet_instance.model_dump()
-        
-        collection.update_one({"_id": ObjectId(pet_id)}, {"$set":  update_pet_dict})
-        
         pet = collection.find_one({"_id": ObjectId(pet_id)})
         
-        pet_instance = PetModel(**pet)
-        pet_dict = pet_instance.model_dump()
+        print(request.method)
         
-        return response.json({"Message":"Registro atualizado", "Pet atualizado": pet_dict})
+        if pet:
+            
+            if request.method == 'PUT':
+        
+                pet_instance = PetModel(**request.json)
+                pet_dict = pet_instance.model_dump()
+                
+                collection.update_one({"_id": ObjectId(pet_id)}, {"$set":  pet_dict})
+            
+            if request.method == 'PATCH':
+                update_pet_instance = UpdatePetModel(**request.json)
+                update_pet_dict = update_pet_instance.model_dump()
+                
+                collection.update_one({"_id": ObjectId(pet_id)}, {"$set":  update_pet_dict})
+                
+                pet = collection.find_one({"_id": ObjectId(pet_id)})
+                
+                pet_instance = PetModel(**pet)
+                pet_dict = pet_instance.model_dump()
+                
+        
+            return response.json({"Message":"Registro atualizado", "Pet atualizado": pet_dict})
+        
+        else:
+            return response.json({"Pet not found"}, status=404)
+        
     except ValidationError as e:       
         erros = e.errors()
         
         return response.json({"Description": erros[0]["type"],
         "Message error": erros[0]['msg'],
         })
-
 
 @PET_ROUTE.route('/delete/pet/<pet_id>/', methods=['GET', 'DELETE'])
 async def delete_one_pet(request: Request, pet_id:str):
     pet = collection.find_one({"_id": ObjectId(pet_id)})
     
-    collection.delete_one(pet)
-    
-    pet_dict = PetModel(**pet).model_dump()
-    
-    return response.json({"Message": "Pet deletado com sucesso", "Pet deletado": pet_dict})
+    if pet:
+        collection.delete_one(pet)
+        pet_dict = PetModel(**pet).model_dump()
+        
+        return response.json({"Message": "Pet deletado com sucesso", "Pet deletado": pet_dict})
+    else:
+        return response.json({"Petshop not found"}, status=404)
