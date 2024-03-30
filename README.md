@@ -52,10 +52,10 @@ Utilize uma ferramenta como Postman ou Insomnia para testar os endpoints da API.
 # Guia dos endpoints da api
 
 ## Petshop
-* `get/all/petshop/` - Retorna todos os petshops (GET)
-* `get/petshop/<id>/` - Busca de petshop por id (GET)
-* `create/petshop/` - Criação de petshop (POST)
-    * Exemplo de corpo da requisição para criação:
+* GET - `/petshops/` - Retorna uma lista dos petshops
+* GET - `/petshops/id:str` - Retorna um petshop
+* POST - `/petshops/` - Criação de petshop
+  * Exemplo de corpo da requisição para criação:
       
       ```
       {
@@ -63,7 +63,7 @@ Utilize uma ferramenta como Postman ou Insomnia para testar os endpoints da API.
             "descricao": "O cantinho aconchegante onde os amigos peludos são tratados com carinho e atenção."
       }
       ```
-* `update/petshop/<id>/` - Atualização de todo o objeto petshop (PUT)
+* PUT - `/petshops/id:str` - Atualiza um petshop por id
     * Exemplo de corpo da requisição para atualização completa:
       
       ```
@@ -72,7 +72,7 @@ Utilize uma ferramenta como Postman ou Insomnia para testar os endpoints da API.
             "descricao": "O paraíso dos animais de estimação, onde a felicidade deles é nossa prioridade."
       }
       ```
-* `update/petshop/<id>/` - Atualização parcial (PATCH)
+* PATCH - `/petshops/id:str` - Atualiza um petshop por id parcialmente
     * Exemplo de corpo da requisição para atualização parcial:
       
       ```
@@ -80,13 +80,13 @@ Utilize uma ferramenta como Postman ou Insomnia para testar os endpoints da API.
              "nome_petshop": "Campina pet"
       }
       ```
-* `delete/petshop/<id>` - Deleta petshop por id (DELETE)
+* DELETE - `/petshops/id:str` - Deleta petshop por id
 
 ## Pet
-* `get/all/pet/` - Retorna todos os pets (GET)
-* `get/pet/<id>/` - Busca de pet por id (GET)
-* `create/pet/` - Criação de pet (POST)
-    * Exemplo de corpo da requisição para criação:
+* GET - `/pets/` - Retorna uma lista dos pets
+* GET - `/pets/id:str` - Retorna um pet
+* POST - `/pets/` - Criação de pet
+  * Exemplo de corpo da requisição para criação:
       
       ```
       {
@@ -94,7 +94,7 @@ Utilize uma ferramenta como Postman ou Insomnia para testar os endpoints da API.
             "especie": "Hamster"
       }
       ```
-* `update/pet/<id>/` - Atualização de todo o objeto pet (PUT)
+* PUT - `/pets/id:str` - Atualiza um pet por id
     * Exemplo de corpo da requisição para atualização completa:
       
       ```
@@ -103,13 +103,12 @@ Utilize uma ferramenta como Postman ou Insomnia para testar os endpoints da API.
             "especie": "Cachorro"
       }
       ```
-* `update/pet/<id>/` - Atualização parcial (PATCH)
-    * Exemplo de corpo da requisição para atualização completa:
+* PATCH - `/pets/id:str` - Atualiza um pet por id parcialmente
+    * Exemplo de corpo da requisição para atualização parcial:
       
       ```
       {
             "especie": "Gato"
       }
       ```
-* `delete/pet/<id>` - Deleta pet por id (DELETE)
-
+* DELETE - `/pets/id:str` - Deleta pet por id
