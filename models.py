@@ -6,8 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field, RootModel, field_serializer
 
 class PetModel (BaseModel):
     id: Optional[ObjectId] = Field(alias="_id", default=None)
-    nome_pet: str
-    especie: str
+    nome_pet: Optional[str] = None
+    especie: Optional[str] = None
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True)

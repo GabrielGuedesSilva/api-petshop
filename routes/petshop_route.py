@@ -55,22 +55,20 @@ async def create_petshop(request: Request):
 @PETSHOP_ROUTE.route('/petshops/<petshop_id:str>/', methods=['PUT'])
 async def update_petshop(request: Request, petshop_id: str):
     try:
-        petshop = collection.find_one({"_id": ObjectId(petshop_id)})
+        update_petshop = UpdatePetshopModel(**request.json).model_dump(exclude={'id'})
 
-        if petshop:
+        update = collection.update_one({"_id": ObjectId(petshop_id)}, {"$set": update_petshop})
 
-            update_petshop = UpdatePetshopModel(**request.json).model_dump(exclude_none=True)
-
-            collection.update_one({"_id": ObjectId(petshop_id)}, {"$set": update_petshop})
-
-            petshop = collection.find_one({"_id": ObjectId(petshop_id)})
-
-            petshop_dict = PetshopModel(**petshop).model_dump()
-
-            return response.json({"Message": "Petshop atualizado com sucesso", "Petshop atualizado": petshop_dict})
-        else:
+        if update.raw_result['updatedExisting'] == False:
             return response.json({"Message": "Petshop not found"}, status=404)
 
+        if update.modified_count == 1:
+            petshop_atualizado = collection.find_one({"_id": ObjectId(petshop_id)})
+
+            return response.json({"Message": "Registro atualizado", "Petshop atualizado": PetshopModel(**petshop_atualizado).model_dump()})
+
+        if update.modified_count == 0:
+            return response.json({"Message": "Nenhuma alteração foi feita no registro"})
     except ValidationError as e:
         erros = e.errors()
 
@@ -82,20 +80,21 @@ async def update_petshop(request: Request, petshop_id: str):
 @PETSHOP_ROUTE.route('/petshops/<petshop_id:str>/', methods=['PATCH'])
 async def update_petshop_patch(request: Request, petshop_id: str):
     try:
-        petshop = collection.find_one({"_id": ObjectId(petshop_id)})
+        update_petshop = UpdatePetshopModel(**request.json).model_dump(exclude_none=True)
 
-        if petshop:
-            update_petshop = UpdatePetshopModel(**request.json).model_dump(exclude_none=True)
+        update = collection.update_one({"_id": ObjectId(petshop_id)}, {"$set": update_petshop})
 
-            collection.update_one({"_id": ObjectId(petshop_id)}, {"$set": update_petshop})
-
-            petshop = collection.find_one({"_id": ObjectId(petshop_id)})
-
-            petshop_dict = PetshopModel(**petshop).model_dump()
-
-            return response.json({"Message": "Petshop atualizado com sucesso", "Petshop atualizado": petshop_dict})
-        else:
+        if update.raw_result['updatedExisting'] == False:
             return response.json({"Message": "Petshop not found"}, status=404)
+
+        if update.modified_count == 1:
+
+            petshop_atualizado = collection.find_one({"_id": ObjectId(petshop_id)})
+
+            return response.json({"Message": "Registro atualizado", "Pet atualizado": PetshopModel(**petshop_atualizado).model_dump()})
+
+        if update.modified_count == 0:
+            return response.json({"Message": "Nenhuma alteração foi feita no registro"})
 
     except ValidationError as e:
         erros = e.errors()
